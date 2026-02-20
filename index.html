@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Training Hub — Electrical Systems</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg1: #0a1628;
+      --bg2: #121f36;
+      --bg3: #1a2942;
+      --brd: #2a3f5f;
+      --t1:  #e8edf5;
+      --t2:  #8fa3c4;
+      --t3:  #5a7099;
+      --on:  #22c55e;
+      --onG: rgba(34, 197, 94, 0.12);
+      --onB: rgba(34, 197, 94, 0.35);
+      --warn:#f59e0b;
+      --flt: #ef4444;
+      --dsl: #3b82f6;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg1);
+      color: var(--t1);
+      font-family: 'IBM Plex Sans', sans-serif;
+    }
+
+    /* ── scanline texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── subtle radial glow behind content ── */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 900px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(34,197,94,0.04) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══════════════════════════════
+       HEADER
+    ══════════════════════════════ */
+    header {
+      position: relative;
+      z-index: 1;
+      border-bottom: 1px solid var(--brd);
+      background: var(--bg2);
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 52px;
+      flex-shrink: 0;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--t1);
+    }
+
+    .header-sub {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 400;
+      color: var(--t3);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--t3);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--on);
+      box-shadow: 0 0 6px var(--on);
+      animation: pulse-dot 2.8s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ══════════════════════════════
+       MAIN LAYOUT
+    ══════════════════════════════ */
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100vh - 52px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 56px 24px 48px;
+    }
+
+    /* ══════════════════════════════
+       HERO SECTION
+    ══════════════════════════════ */
+    .hero {
+      text-align: center;
+      margin-bottom: 52px;
+      max-width: 580px;
+    }
+
+    .hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--on);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .hero-eyebrow::before,
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 32px;
+      height: 1px;
+      background: var(--on);
+      opacity: 0.5;
+    }
+
+    .hero-title {
+      font-size: clamp(26px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--t1);
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .hero-desc {
+      font-size: 13px;
+      color: var(--t2);
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════
+       DIVIDER
+    ══════════════════════════════ */
+    .section-label {
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .section-label span {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--t3);
+      white-space: nowrap;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--brd);
+    }
+
+    /* ══════════════════════════════
+       CARDS GRID
+    ══════════════════════════════ */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 860px;
+    }
+
+    /* ── card ── */
+    .card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg2);
+      border: 1px solid var(--brd);
+      border-radius: 8px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition:
+        border-color 0.25s ease,
+        box-shadow   0.25s ease,
+        background   0.25s ease,
+        transform    0.2s ease;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--onG) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+
+    .card:hover {
+      border-color: var(--on);
+      box-shadow: 0 0 0 1px rgba(34,197,94,0.15), 0 8px 32px rgba(0,0,0,0.4), 0 0 24px rgba(34,197,94,0.08);
+      background: var(--bg3);
+      transform: translateY(-2px);
+    }
+
+    .card:hover::before { opacity: 1; }
+
+    /* corner accent */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0;
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 0 28px 28px 0;
+      border-color: transparent var(--brd) transparent transparent;
+      border-radius: 0 8px 0 0;
+      transition: border-color 0.25s ease;
+    }
+
+    .card:hover::after {
+      border-color: transparent var(--on) transparent transparent;
+    }
+
+    /* ── card tag ── */
+    .card-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--t3);
+      border: 1px solid var(--brd);
+      border-radius: 3px;
+      padding: 3px 8px;
+      margin-bottom: 18px;
+      width: fit-content;
+      transition: color 0.25s, border-color 0.25s;
+    }
+
+    .card-tag-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: currentColor;
+      flex-shrink: 0;
+    }
+
+    .card:hover .card-tag {
+      color: var(--on);
+      border-color: rgba(34,197,94,0.4);
+    }
+
+    /* ── card title ── */
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--t1);
+      line-height: 1.3;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    /* ── card description ── */
+    .card-desc {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.65;
+      flex: 1;
+      margin-bottom: 24px;
+    }
+
+    /* ── card footer ── */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 16px;
+      border-top: 1px solid var(--brd);
+    }
+
+    .card-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      color: var(--warn);
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 3px;
+      padding: 3px 8px;
+    }
+
+    .card-cta {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--t3);
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .card-cta-arrow {
+      display: inline-block;
+      transition: transform 0.2s;
+    }
+
+    .card:hover .card-cta {
+      color: var(--on);
+    }
+
+    .card:hover .card-cta-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ══════════════════════════════
+       FOOTER
+    ══════════════════════════════ */
+    footer {
+      position: relative;
+      z-index: 1;
+      margin-top: 52px;
+      width: 100%;
+      max-width: 860px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding-top: 20px;
+      border-top: 1px solid var(--brd);
+      text-align: center;
+    }
+
+    .footer-note {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px;
+      color: var(--t3);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-future {
+      font-size: 11px;
+      color: var(--t3);
+    }
+
+    .footer-future strong {
+      color: var(--t2);
+      font-weight: 500;
+    }
+
+    /* ══════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════ */
+    @media (max-width: 480px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-sub { display: none; }
+
+      .hero { margin-bottom: 36px; }
+
+      .page { padding: 36px 16px 40px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-left">
+      <span class="header-title">Training Hub</span>
+      <span class="header-sub">Electrical Systems &mdash; Interactive Training Modules</span>
+    </div>
+    <div class="header-status">
+      <span class="status-dot"></span>
+      <span>Select a module to begin</span>
+    </div>
+  </header>
+
+  <div class="page">
+
+    <div class="hero">
+      <div class="hero-eyebrow">Interactive Training Modules</div>
+      <h1 class="hero-title">Electrical Systems<br>Training Hub</h1>
+      <p class="hero-desc">
+        Step-by-step animated simulations and interactive diagrams for
+        plant electrical systems and reactor protection logic.
+        Select a module below to begin.
+      </p>
+    </div>
+
+    <div class="section-label">
+      <span>Available Modules</span>
+    </div>
+
+    <div class="grid">
+
+      <!-- Card 1 -->
+      <a class="card" href="https://bernie638.github.io/Electrical-Transfer/">
+        <span class="card-tag">
+          <span class="card-tag-dot"></span>
+          Electrical
+        </span>
+        <h2 class="card-title">Electrical Transfer Schemes</h2>
+        <p class="card-desc">
+          Interactive simulation of normal, alternate, and emergency bus transfer
+          scenarios including fast transfer, residual transfer, loss of offsite power,
+          bus faults, and diesel failure.
+        </p>
+        <div class="card-footer">
+          <span class="card-badge">5 Scenarios</span>
+          <span class="card-cta">Open Module <span class="card-cta-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a class="card" href="https://bernie638.github.io/PR-and-SR-trip/">
+        <span class="card-tag">
+          <span class="card-tag-dot"></span>
+          Reactor Protection
+        </span>
+        <h2 class="card-title">PR &amp; SR Trip Logic</h2>
+        <p class="card-desc">
+          Bistable logic diagram for Power Range and Source Range nuclear instruments
+          across Divisions A &amp; B, including 2oo4 voting logic, SR block permissive,
+          and manual trip functions.
+        </p>
+        <div class="card-footer">
+          <span class="card-badge">Interactive</span>
+          <span class="card-cta">Open Module <span class="card-cta-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- Add future cards here following the same pattern -->
+
+    </div>
+
+    <footer>
+      <p class="footer-note">Links open in the same tab</p>
+      <p class="footer-future">More modules will be added as training content is developed.</p>
+    </footer>
+
+  </div>
+
+</body>
+</html>
